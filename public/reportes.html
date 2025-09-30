@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reportes y Estadísticas</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px 32px;
+  margin: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #9f7aea, #805ad5);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.header-subtitle {
+  color: #718096;
+  font-size: 14px;
+}
+
+.back-btn {
+  background: #f56565;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #e53e3e;
+  transform: translateY(-2px);
+}
+
+/* Layout principal */
+.main-container {
+  padding: 0 20px 20px;
+}
+
+/* Filtros de fecha */
+.filters-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.filter-input {
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #9f7aea;
+  box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.1);
+}
+
+.btn-filter {
+  background: linear-gradient(135deg, #9f7aea, #805ad5);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(159, 122, 234, 0.3);
+}
+
+/* Cards de estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.stat-card.inventario::before {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.stat-card.ventas::before {
+  background: linear-gradient(135deg, #ed8936, #dd6b20);
+}
+
+.stat-card.productos::before {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+}
+
+.stat-card.ingresos::before {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.stat-label {
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-change {
+  font-size: 12px;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.stat-change.positive {
+  background: rgba(72, 187, 120, 0.1);
+  color: #38a169;
+}
+
+.stat-change.negative {
+  background: rgba(245, 101, 101, 0.1);
+  color: #e53e3e;
+}
+
+/* Gráficos y reportes */
+.reports-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.report-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f7fafc;
+}
+
+.report-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-export {
+  background: #48bb78;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-export:hover {
+  background: #38a169;
+  transform: translateY(-1px);
+}
+
+/* Tabla de reportes */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.report-table th,
+.report-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.report-table th {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.report-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Lista de productos más vendidos */
+.top-products {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #e2e8f0;
+}
+
+.product-item.top-1 { border-left-color: #fbbf24; }
+.product-item.top-2 { border-left-color: #94a3b8; }
+.product-item.top-3 { border-left-color: #cd853f; }
+
+.product-info h4 {
+  color: #2d3748;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.product-info p {
+  color: #718096;
+  font-size: 12px;
+}
+
+.product-stats {
+  text-align: right;
+}
+
+.quantity-sold {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.revenue {
+  font-size: 12px;
+  color: #718096;
+}
+
+/* Gráfico placeholder */
+.chart-placeholder {
+  height: 300px;
+  background: linear-gradient(135deg, #f8fafc, #edf2f7);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #718096;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Alertas de stock bajo */
+.alerts-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: rgba(245, 101, 101, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #f56565;
+}
+
+.alert-icon {
+  font-size: 20px;
+  margin-right: 12px;
+}
+
+.alert-info {
+  flex: 1;
+}
+
+.alert-title {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.alert-description {
+  font-size: 14px;
+  color: #718096;
+}
+
+.alert-stock {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f56565;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(159, 122, 234, 0.1);
+  border-top: 3px solid #9f7aea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 2000;
+  transform: translateX(400px);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, #9f7aea, #805ad5);
+}
+</style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">📊</div>
+      <div>
+        <h1 class="header-title">Reportes y Estadísticas</h1>
+        <p class="header-subtitle">Análisis detallado del rendimiento del negocio</p>
+      </div>
+    </div>
+    <button class="back-btn" onclick="window.history.back()">
+      ← Regresar
+    </button>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="main-container">
+    <!-- Filtros de fecha -->
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Fecha Inicio</label>
+          <input type="date" id="fechaInicio" class="filter-input">
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Fecha Fin</label>
+          <input type="date" id="fechaFin" class="filter-input">
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Período</label>
+          <select id="periodoRapido" class="filter-input" onchange="setPeriodoRapido()">
+            <option value="">Personalizado</option>
+            <option value="hoy">Hoy</option>
+            <option value="ayer">Ayer</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mes</option>
+            <option value="trimestre">Este trimestre</option>
+            <option value="año">Este año</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <button class="btn-filter" onclick="actualizarReportes()">
+            🔍 Generar Reportes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas principales -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card inventario">
+        <div class="stat-icon">📦</div>
+        <div class="stat-number">0</div>
+        <div class="stat-label">Productos Total</div>
+      </div>
+      
+      <div class="stat-card productos">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-number">0</div>
+        <div class="stat-label">Stock Bajo</div>
+      </div>
+      
+      <div class="stat-card ventas">
+        <div class="stat-icon">💰</div>
+        <div class="stat-number">0</div>
+        <div class="stat-label">Ventas Período</div>
+      </div>
+      
+      <div class="stat-card ingresos">
+        <div class="stat-icon">💵</div>
+        <div class="stat-number">$0.00</div>
+        <div class="stat-label">Ingresos Período</div>
+      </div>
+    </div>
+
+    <!-- Reportes detallados -->
+    <div class="reports-grid">
+      <!-- Ventas por período -->
+      <div class="report-card">
+        <div class="report-header">
+          <h3 class="report-title">
+            💰 Ventas por Período
+          </h3>
+          <button class="btn-export" onclick="exportarVentas()">
+            📥 Exportar
+          </button>
+        </div>
+        
+        <div class="chart-placeholder" id="ventasChart">
+          <div>
+            <div style="font-size: 48px; margin-bottom: 16px;">📈</div>
+            <p>Gráfico de ventas por período</p>
+            <p style="font-size: 14px; margin-top: 8px;">Los datos se mostrarán después de generar el reporte</p>
+          </div>
+        </div>
+
+        <table class="report-table" id="ventasTable">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Ventas</th>
+              <th>Productos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 20px; color: #718096;">
+                Selecciona un período para ver los datos
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Productos más vendidos -->
+      <div class="report-card">
+        <div class="report-header">
+          <h3 class="report-title">
+            🏆 Top Productos
+          </h3>
+          <button class="btn-export" onclick="exportarProductos()">
+            📥 Exportar
+          </button>
+        </div>
+        
+        <div class="top-products" id="topProducts">
+          <div style="text-align: center; padding: 40px; color: #718096;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+            <p>Top productos más vendidos</p>
+            <p style="font-size: 14px; margin-top: 8px;">Genera un reporte para ver los datos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas de stock bajo -->
+    <div class="alerts-section">
+      <div class="report-header">
+        <h3 class="report-title">
+          ⚠️ Alertas de Inventario
+        </h3>
+      </div>
+      
+      <div id="stockAlerts">
+        <div style="text-align: center; padding: 40px; color: #48bb78;">
+          <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+          <h3>¡Sistema listo!</h3>
+          <p>Carga los datos para ver las alertas de inventario</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales para datos simulados
+    let reporteInventario = {
+      total_productos: 150,
+      productos_sin_stock: 5,
+      valor_total_inventario: 25600.50
+    };
+
+    let reporteVentas = {
+      total_ventas: 0,
+      ingresos_totales: 0
+    };
+
+    let ventasDetalladas = [];
+
+    // Datos de ejemplo para demostración
+    const productosEjemplo = [
+      { nombre: "Smartphone Galaxy", precio: 599.99, stock: 25, categoria: "Electrónicos" },
+      { nombre: "Laptop HP", precio: 899.99, stock: 2, categoria: "Computadoras" },
+      { nombre: "Auriculares Bluetooth", precio: 79.99, stock: 45, categoria: "Accesorios" },
+      { nombre: "Tablet iPad", precio: 449.99, stock: 1, categoria: "Electrónicos" },
+      { nombre: "Cámara Canon", precio: 1299.99, stock: 8, categoria: "Fotografía" }
+    ];
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      setupDates();
+      cargarDatosIniciales();
+    });
+
+    // Configurar fechas por defecto
+    function setupDates() {
+      const hoy = new Date();
+      const hace30Dias = new Date(hoy);
+      hace30Dias.setDate(hoy.getDate() - 30);
+
+      document.getElementById('fechaFin').value = hoy.toISOString().split('T')[0];
+      document.getElementById('fechaInicio').value = hace30Dias.toISOString().split('T')[0];
+    }
+
+    // Establecer período rápido
+    function setPeriodoRapido() {
+      const periodo = document.getElementById('periodoRapido').value;
+      const hoy = new Date();
+      let inicio = new Date();
+      let fin = new Date();
+
+      switch(periodo) {
+        case 'hoy':
+          inicio = new Date(hoy);
+          fin = new Date(hoy);
+          break;
+        case 'ayer':
+          inicio = new Date(hoy);
+          inicio.setDate(hoy.getDate() - 1);
+          fin = new Date(inicio);
+          break;
+        case 'semana':
+          inicio = new Date(hoy);
+          inicio.setDate(hoy.getDate() - hoy.getDay());
+          fin = new Date(hoy);
+          break;
+        case 'mes':
+          inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+          fin = new Date(hoy);
+          break;
+        case 'trimestre':
+          const trimestre = Math.floor(hoy.getMonth() / 3);
+          inicio = new Date(hoy.getFullYear(), trimestre * 3, 1);
+          fin = new Date(hoy);
+          break;
+        case 'año':
+          inicio = new Date(hoy.getFullYear(), 0, 1);
+          fin = new Date(hoy);
+          break;
+        default:
+          return;
+      }
+
+      document.getElementById('fechaInicio').value = inicio.toISOString().split('T')[0];
+      document.getElementById('fechaFin').value = fin.toISOString().split('T')[0];
+    }
+
+    // Cargar datos iniciales
+    function cargarDatosIniciales() {
+      cargarAlertasStock();
+      actualizarEstadisticas();
+    }
+
+    // Cargar alertas de stock
+    function cargarAlertasStock() {
+      const stockBajo = productosEjemplo.filter(p => p.stock <= 5);
+      const alertsContainer = document.getElementById('stockAlerts');
+      
+      if (stockBajo.length === 0) {
+        alertsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #48bb78;">
+            <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+            <h3>¡Excelente!</h3>
+            <p>No hay productos con stock bajo</p>
+          </div>
+        `;
+        return;
+      }
+
+      alertsContainer.innerHTML = stockBajo.map(producto => `
+        <div class="alert-item">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-info">
+            <div class="alert-title">${producto.nombre}</div>
+            <div class="alert-description">${producto.categoria}</div>
+          </div>
+          <div class="alert-stock">${producto.stock}</div>
+        </div>
+      `).join('');
+    }
+
+    // Actualizar reportes
+    function actualizarReportes() {
+      showToast('Generando reportes...', 'info');
+      
+      const fechaInicio = document.getElementById('fechaInicio').value;
+      const fechaFin = document.getElementById('fechaFin').value;
+
+      if (!fechaInicio || !fechaFin) {
+        showToast('Selecciona un período válido', 'error');
+        return;
+      }
+
+      // Simular datos de ventas
+      generarDatosVentasSimulados(fechaInicio, fechaFin);
+      
+      // Actualizar estadísticas
+      actualizarEstadisticas();
+      
+      // Actualizar tabla de ventas
+      actualizarTablaVentas();
+      
+      // Actualizar productos más vendidos
+      actualizarTopProductos();
+
+      showToast('Reportes actualizados correctamente', 'success');
+    }
+
+    // Generar datos simulados de ventas
+    function generarDatosVentasSimulados(fechaInicio, fechaFin) {
+      const inicio = new Date(fechaInicio);
+      const fin = new Date(fechaFin);
+      const ventasSimuladas = [];
+      
+      let totalVentas = 0;
+      let ingresosTotales = 0;
+
+      // Generar ventas aleatorias para cada día del período
+      for (let fecha = new Date(inicio); fecha <= fin; fecha.setDate(fecha.getDate() + 1)) {
+        const ventasDelDia = Math.floor(Math.random() * 8) + 1;
+        
+        for (let i = 0; i < ventasDelDia; i++) {
+          const producto = productosEjemplo[Math.floor(Math.random() * productosEjemplo.length)];
+          const cantidad = Math.floor(Math.random() * 3) + 1;
+          const precioTotal = producto.precio * cantidad;
+          
+          ventasSimuladas.push({
+            fecha: new Date(fecha),
+            producto_nombre: producto.nombre,
+            cantidad: cantidad,
+            precio_unitario: producto.precio,
+            precio_total: precioTotal,
+            metodo_pago: ['Efectivo', 'Tarjeta', 'Transferencia'][Math.floor(Math.random() * 3)],
+            vendedor: ['Juan Pérez', 'María García', 'Carlos López'][Math.floor(Math.random() * 3)]
+          });
+          
+          totalVentas++;
+          ingresosTotales += precioTotal;
+        }
+      }
+
+      ventasDetalladas = ventasSimuladas;
+      reporteVentas = {
+        total_ventas: totalVentas,
+        ingresos_totales: ingresosTotales
+      };
+    }
+
+    // Actualizar estadísticas principales
+    function actualizarEstadisticas() {
+      const stockBajo = productosEjemplo.filter(p => p.stock <= 5).length;
+      
+      const stats = [
+        {
+          selector: '.stat-card.inventario .stat-number',
+          value: reporteInventario.total_productos
+        },
+        {
+          selector: '.stat-card.productos .stat-number',
+          value: stockBajo
+        },
+        {
+          selector: '.stat-card.ventas .stat-number',
+          value: reporteVentas.total_ventas
+        },
+        {
+          selector: '.stat-card.ingresos .stat-number',
+          value: '$' + (reporteVentas.ingresos_totales || 0).toLocaleString('es-ES', {minimumFractionDigits: 2})
+        }
+      ];
+
+      stats.forEach(stat => {
+        const element = document.querySelector(stat.selector);
+        if (element) {
+          element.textContent = stat.value;
+        }
+      });
+    }
+
+    // Actualizar tabla de ventas
+    function actualizarTablaVentas() {
+      const tableBody = document.querySelector('#ventasTable tbody');
+      
+      if (!ventasDetalladas || ventasDetalladas.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 20px; color: #718096;">
+              No hay ventas en el período seleccionado
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Agrupar ventas por fecha
+      const ventasPorFecha = {};
+      ventasDetalladas.forEach(venta => {
+        const fecha = venta.fecha.toLocaleDateString();
+        
+        if (!ventasPorFecha[fecha]) {
+          ventasPorFecha[fecha] = {
+            fecha: fecha,
+            ventas: 0,
+            productos: 0,
+            total: 0
+          };
+        }
+        
+        ventasPorFecha[fecha].ventas++;
+        ventasPorFecha[fecha].productos += venta.cantidad;
+        ventasPorFecha[fecha].total += venta.precio_total;
+      });
+
+      const resumen = Object.values(ventasPorFecha).sort((a, b) => 
+        new Date(b.fecha) - new Date(a.fecha)
+      );
+
+      tableBody.innerHTML = resumen.map(dia => `
+        <tr>
+          <td>${dia.fecha}</td>
+          <td>${dia.ventas}</td>
+          <td>${dia.productos}</td>
+          <td>$${dia.total.toLocaleString('es-ES', {minimumFractionDigits: 2})}</td>
+        </tr>
+      `).join('');
+
+      // Actualizar gráfico placeholder
+      document.getElementById('ventasChart').innerHTML = `
+        <div>
+          <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+          <p><strong>${resumen.length}</strong> días con ventas</p>
+          <p style="font-size: 14px; margin-top: 8px;">
+            Total: <strong>${resumen.reduce((sum, dia) => sum + dia.total, 0).toLocaleString('es-ES', {minimumFractionDigits: 2})}</strong>
+          </p>
+        </div>
+      `;
+    }
+
+    // Actualizar productos más vendidos
+    function actualizarTopProductos() {
+      const topProductsContainer = document.getElementById('topProducts');
+      
+      if (!ventasDetalladas || ventasDetalladas.length === 0) {
+        topProductsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #718096;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+            <p>No hay datos de productos vendidos</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Agrupar productos por ventas
+      const productoVentas = {};
+      ventasDetalladas.forEach(venta => {
+        const nombre = venta.producto_nombre;
+        if (!productoVentas[nombre]) {
+          productoVentas[nombre] = {
+            nombre: nombre,
+            cantidad: 0,
+            ingresos: 0
+          };
+        }
+        
+        productoVentas[nombre].cantidad += venta.cantidad;
+        productoVentas[nombre].ingresos += venta.precio_total;
+      });
+
+      const topProductos = Object.values(productoVentas)
+        .sort((a, b) => b.cantidad - a.cantidad)
+        .slice(0, 10);
+
+      if (topProductos.length === 0) {
+        topProductsContainer.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #718096;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
+            <p>No hay productos vendidos en el período</p>
+          </div>
+        `;
+        return;
+      }
+
+      topProductsContainer.innerHTML = topProductos.map((producto, index) => `
+        <div class="product-item ${index < 3 ? `top-${index + 1}` : ''}">
+          <div class="product-info">
+            <h4>#${index + 1} ${producto.nombre}</h4>
+            <p>Ingresos generados</p>
+          </div>
+          <div class="product-stats">
+            <div class="quantity-sold">${producto.cantidad}</div>
+            <div class="revenue">${producto.ingresos.toLocaleString('es-ES', {minimumFractionDigits: 2})}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Exportar datos de ventas
+    function exportarVentas() {
+      if (!ventasDetalladas || ventasDetalladas.length === 0) {
+        showToast('No hay datos para exportar', 'error');
+        return;
+      }
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Fecha,Producto,Cantidad,Precio Unitario,Total,Método Pago,Vendedor\n"
+        + ventasDetalladas.map(v => 
+            `"${v.fecha.toLocaleDateString()}","${v.producto_nombre}",${v.cantidad},${v.precio_unitario},${v.precio_total.toFixed(2)},"${v.metodo_pago}","${v.vendedor}"`
+          ).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `ventas_${document.getElementById('fechaInicio').value}_${document.getElementById('fechaFin').value}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('Reporte de ventas exportado correctamente', 'success');
+    }
+
+    // Exportar productos más vendidos
+    function exportarProductos() {
+      if (!ventasDetalladas || ventasDetalladas.length === 0) {
+        showToast('No hay datos para exportar', 'error');
+        return;
+      }
+
+      // Agrupar productos por ventas
+      const productoVentas = {};
+      ventasDetalladas.forEach(venta => {
+        const nombre = venta.producto_nombre;
+        if (!productoVentas[nombre]) {
+          productoVentas[nombre] = {
+            nombre: nombre,
+            cantidad: 0,
+            ingresos: 0
+          };
+        }
+        
+        productoVentas[nombre].cantidad += venta.cantidad;
+        productoVentas[nombre].ingresos += venta.precio_total;
+      });
+
+      const topProductos = Object.values(productoVentas)
+        .sort((a, b) => b.cantidad - a.cantidad);
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Posición,Producto,Cantidad Vendida,Ingresos Generados\n"
+        + topProductos.map((producto, index) => 
+            `${index + 1},"${producto.nombre}",${producto.cantidad},${producto.ingresos.toFixed(2)}`
+          ).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `top_productos_${document.getElementById('fechaInicio').value}_${document.getElementById('fechaFin').value}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showToast('Reporte de productos exportado correctamente', 'success');
+    }
+
+    // Sistema de notificaciones toast
+    function showToast(message, type = 'info') {
+      // Remover toasts existentes
+      const existingToasts = document.querySelectorAll('.toast');
+      existingToasts.forEach(toast => toast.remove());
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      // Mostrar toast
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      // Ocultar toast después de 3 segundos
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Función para simular carga de datos más realista
+    function simularCargaDatos(callback, delay = 1000) {
+      setTimeout(callback, delay);
+    }
+
+    // Agregar efecto de carga para mejorar UX
+    function mostrarCargando(elemento) {
+      elemento.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      `;
+    }
+
+    // Función para formatear números grandes
+    function formatearNumero(numero) {
+      if (numero >= 1000000) {
+        return (numero / 1000000).toFixed(1) + 'M';
+      } else if (numero >= 1000) {
+        return (numero / 1000).toFixed(1) + 'K';
+      }
+      return numero.toString();
+    }
+
+    // Función para generar colores aleatorios para gráficos
+    function generarColores(cantidad) {
+      const colores = [
+        '#9f7aea', '#48bb78', '#ed8936', '#4299e1', '#f093fb',
+        '#38a169', '#dd6b20', '#3182ce', '#805ad5', '#e53e3e'
+      ];
+      return colores.slice(0, cantidad);
+    }
+
+    // Agregar animaciones a las estadísticas
+    function animarEstadistica(elemento, valorFinal) {
+      const valorInicial = 0;
+      const duracion = 1000;
+      const incremento = valorFinal / (duracion / 16);
+      let valorActual = valorInicial;
+
+      const intervalo = setInterval(() => {
+        valorActual += incremento;
+        if (valorActual >= valorFinal) {
+          valorActual = valorFinal;
+          clearInterval(intervalo);
+        }
+        elemento.textContent = Math.floor(valorActual);
+      }, 16);
+    }
+
+    // Función para detectar cambios en las fechas y actualizar automáticamente
+    document.getElementById('fechaInicio').addEventListener('change', () => {
+      const fechaInicio = new Date(document.getElementById('fechaInicio').value);
+      const fechaFin = new Date(document.getElementById('fechaFin').value);
+      
+      if (fechaInicio > fechaFin) {
+        document.getElementById('fechaFin').value = document.getElementById('fechaInicio').value;
+        showToast('La fecha de fin se ajustó automáticamente', 'info');
+      }
+    });
+
+    document.getElementById('fechaFin').addEventListener('change', () => {
+      const fechaInicio = new Date(document.getElementById('fechaInicio').value);
+      const fechaFin = new Date(document.getElementById('fechaFin').value);
+      
+      if (fechaFin < fechaInicio) {
+        document.getElementById('fechaInicio').value = document.getElementById('fechaFin').value;
+        showToast('La fecha de inicio se ajustó automáticamente', 'info');
+      }
+    });
+
+    // Función para agregar atajos de teclado
+    document.addEventListener('keydown', (e) => {
+      // Ctrl + G para generar reportes
+      if (e.ctrlKey && e.key === 'g') {
+        e.preventDefault();
+        actualizarReportes();
+      }
+      
+      // Ctrl + E para exportar ventas
+      if (e.ctrlKey && e.key === 'e') {
+        e.preventDefault();
+        exportarVentas();
+      }
+      
+      // Escape para regresar
+      if (e.key === 'Escape') {
+        window.history.back();
+      }
+    });
+
+    // Mostrar mensaje de bienvenida
+    setTimeout(() => {
+      showToast('Sistema de reportes cargado correctamente', 'success');
+    }, 500);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Servicios</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px 32px;
+  margin: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.header-subtitle {
+  color: #718096;
+  font-size: 14px;
+}
+
+.back-btn {
+  background: #f56565;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #e53e3e;
+  transform: translateY(-2px);
+}
+
+/* Layout principal */
+.main-container {
+  padding: 0 20px 20px;
+}
+
+.controls-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f7fafc;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #718096;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  background: white;
+  color: #2d3748;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Grid de servicios */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.service-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.service-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.service-category {
+  background: rgba(66, 153, 225, 0.1);
+  color: #4299e1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.service-description {
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.service-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.service-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.service-duration {
+  color: #718096;
+  font-size: 14px;
+}
+
+.service-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: #ffd93d;
+  color: #744c00;
+}
+
+.btn-edit:hover {
+  background: #ffc107;
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: #ff3b30;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #d70015;
+  transform: translateY(-1px);
+}
+
+/* Lista de órdenes de servicio */
+.orders-list {
+  margin-top: 24px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  border-left: 4px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.order-card.pendiente {
+  border-left-color: #fbbf24;
+}
+
+.order-card.en_proceso {
+  border-left-color: #3b82f6;
+}
+
+.order-card.completado {
+  border-left-color: #10b981;
+}
+
+.order-card.cancelado {
+  border-left-color: #ef4444;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.order-id {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.order-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-pendiente {
+  background: rgba(251, 191, 36, 0.1);
+  color: #d97706;
+}
+
+.status-en_proceso {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.status-completado {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.status-cancelado {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.order-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.info-item {
+  font-size: 14px;
+}
+
+.info-label {
+  color: #718096;
+  margin-bottom: 2px;
+}
+
+.info-value {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlide 0.3s ease;
+}
+
+@keyframes modalSlide {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f7fafc;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.close-btn {
+  background: #e2e8f0;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #718096;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #cbd5e0;
+  transform: rotate(90deg);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.form-input, .form-select, .form-textarea {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e0;
+}
+
+/* Estados vacíos */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #718096;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #4a5568;
+}
+
+.empty-description {
+  font-size: 14px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 2000;
+  transform: translateX(400px);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-actions {
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">🛠️</div>
+      <div>
+        <h1 class="header-title">Gestión de Servicios</h1>
+        <p class="header-subtitle">Administra servicios y órdenes de trabajo</p>
+      </div>
+    </div>
+    <button class="back-btn" onclick="window.history.back()">
+      ← Regresar
+    </button>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="main-container">
+    <!-- Controles principales -->
+    <div class="controls-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          🔧 Panel de Servicios
+        </h2>
+        <button class="btn-primary" onclick="openServiceModal()">
+          ➕ Nuevo Servicio
+        </button>
+      </div>
+
+      <!-- Tabs de navegación -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('services')">
+          Catálogo de Servicios
+        </button>
+        <button class="tab" onclick="switchTab('orders')">
+          Órdenes de Trabajo
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel de servicios -->
+    <div id="servicesPanel">
+      <div class="services-grid" id="servicesGrid">
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #718096;">
+          Cargando servicios...
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de órdenes -->
+    <div id="ordersPanel" style="display: none;">
+      <div class="controls-section">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button class="btn-primary" onclick="openOrderModal()">
+            ➕ Nueva Orden
+          </button>
+          <select id="statusFilter" class="form-select" style="width: auto;" onchange="filterOrders()">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_proceso">En proceso</option>
+            <option value="completado">Completado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="orders-list" id="ordersList">
+        <div style="text-align: center; padding: 40px; color: #718096;">
+          Cargando órdenes...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de servicio -->
+  <div class="modal" id="serviceModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="serviceModalTitle">Nuevo Servicio</h3>
+        <button class="close-btn" onclick="closeServiceModal()">✕</button>
+      </div>
+
+      <form id="serviceForm">
+        <input type="hidden" id="serviceId">
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Nombre del Servicio *</label>
+            <input type="text" id="serviceName" class="form-input" placeholder="Ej: Reparación de celulares" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Descripción</label>
+            <textarea id="serviceDescription" class="form-textarea" placeholder="Descripción detallada del servicio..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio *</label>
+            <input type="number" id="servicePrice" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Duración (minutos)</label>
+            <input type="number" id="serviceDuration" class="form-input" placeholder="60" min="1">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Categoría</label>
+            <select id="serviceCategory" class="form-select">
+              <option value="">Seleccione una categoría</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeServiceModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary" id="saveServiceBtn">
+            💾 Guardar Servicio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de orden de servicio -->
+  <div class="modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="orderModalTitle">Nueva Orden de Servicio</h3>
+        <button class="close-btn" onclick="closeOrderModal()">✕</button>
+      </div>
+
+      <form id="orderForm">
+        <input type="hidden" id="orderId">
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Servicio *</label>
+            <select id="orderService" class="form-select" required>
+              <option value="">Seleccione un servicio</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estado</label>
+            <select id="orderStatus" class="form-select">
+              <option value="pendiente">Pendiente</option>
+              <option value="en_proceso">En proceso</option>
+              <option value="completado">Completado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cliente *</label>
+            <input type="text" id="clientName" class="form-input" placeholder="Nombre del cliente" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input type="tel" id="clientPhone" class="form-input" placeholder="Teléfono del cliente">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Email</label>
+            <input type="email" id="clientEmail" class="form-input" placeholder="Email del cliente">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio Final</label>
+            <input type="number" id="finalPrice" class="form-input" placeholder="0.00" step="0.01" min="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha Completado</label>
+            <input type="datetime-local" id="completedDate" class="form-input">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Notas</label>
+            <textarea id="orderNotes" class="form-textarea" placeholder="Notas adicionales sobre la orden..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeOrderModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary" id="saveOrderBtn">
+            💾 Guardar Orden
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="session-manager.js"></script>
+  <script>
+    // Variables globales
+    let servicios = [];
+    let ordenes = [];
+    let categorias = [];
+    let currentTab = 'services';
+    let isEditingService = false;
+    let isEditingOrder = false;
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      loadInitialData();
+      setupEventListeners();
+    });
+
+    // Event listeners
+    function setupEventListeners() {
+      document.getElementById('serviceForm').addEventListener('submit', saveService);
+      document.getElementById('orderForm').addEventListener('submit', saveOrder);
+      
+      // Auto-rellenar precio cuando se selecciona un servicio
+      document.getElementById('orderService').addEventListener('change', function() {
+        const serviceId = this.value;
+        const service = servicios.find(s => s.id == serviceId);
+        if (service) {
+          document.getElementById('finalPrice').value = service.precio;
+        }
+      });
+    }
+
+    // Cargar datos iniciales
+    async function loadInitialData() {
+      try {
+        showToast('Cargando datos...', 'info');
+        
+        // Cargar categorías
+        categorias = await window.api.listarCategorias();
+        populateServiceCategories();
+        
+        // Cargar servicios
+        await loadServices();
+        
+        showToast('Datos cargados correctamente', 'success');
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+        showToast('Error cargando datos', 'error');
+      }
+    }
+
+    // Poblar categorías en el select
+    function populateServiceCategories() {
+      const select = document.getElementById('serviceCategory');
+      select.innerHTML = '<option value="">Seleccione una categoría</option>';
+      
+      categorias.forEach(categoria => {
+        const option = new Option(categoria.nombre, categoria.id);
+        select.add(option);
+      });
+    }
+
+    // Cargar servicios
+    async function loadServices() {
+      try {
+        servicios = await window.api.listarServicios();
+        displayServices();
+        populateOrderServices();
+      } catch (error) {
+        console.error('Error cargando servicios:', error);
+        showToast('Error cargando servicios', 'error');
+      }
+    }
+
+    // Mostrar servicios
+    function displayServices() {
+      const grid = document.getElementById('servicesGrid');
+      
+      if (servicios.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <div class="empty-icon">🛠️</div>
+            <h3 class="empty-title">No hay servicios</h3>
+            <p class="empty-description">
+              Comienza agregando servicios que ofreces a tus clientes
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = servicios.map(servicio => `
+        <div class="service-card">
+          <div class="service-header">
+            <div>
+              <div class="service-name">${servicio.nombre}</div>
+              ${servicio.categoria_nombre ? `<div class="service-category">${servicio.categoria_nombre}</div>` : ''}
+            </div>
+          </div>
+          
+          ${servicio.descripcion ? `<div class="service-description">${servicio.descripcion}</div>` : ''}
+          
+          <div class="service-details">
+            <div class="service-price">${parseFloat(servicio.precio).toFixed(2)}</div>
+            ${servicio.duracion_estimada ? `<div class="service-duration">${servicio.duracion_estimada} min</div>` : ''}
+          </div>
+          
+          <div class="service-actions">
+            <button class="action-btn btn-edit" onclick="editService(${servicio.id})">
+              ✏️ Editar
+            </button>
+            <button class="action-btn btn-delete" onclick="deleteService(${servicio.id}, '${servicio.nombre}')">
+              🗑️ Eliminar
+            </button>
+            <button class="btn-primary" style="font-size: 12px;" onclick="createOrderFromService(${servicio.id})">
+              📝 Nueva Orden
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Poblar servicios en el select de órdenes
+    function populateOrderServices() {
+      const select = document.getElementById('orderService');
+      select.innerHTML = '<option value="">Seleccione un servicio</option>';
+      
+      servicios.forEach(servicio => {
+        const option = new Option(`${servicio.nombre} - ${parseFloat(servicio.precio).toFixed(2)}`, servicio.id);
+        select.add(option);
+      });
+    }
+
+    // Cambiar pestañas
+    function switchTab(tab) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      currentTab = tab;
+      
+      if (tab === 'services') {
+        document.getElementById('servicesPanel').style.display = 'block';
+        document.getElementById('ordersPanel').style.display = 'none';
+      } else {
+        document.getElementById('servicesPanel').style.display = 'none';
+        document.getElementById('ordersPanel').style.display = 'block';
+        loadOrders();
+      }
+    }
+
+    // Modal de servicio
+    function openServiceModal() {
+      document.getElementById('serviceModalTitle').textContent = 'Nuevo Servicio';
+      document.getElementById('serviceForm').reset();
+      document.getElementById('serviceId').value = '';
+      document.getElementById('saveServiceBtn').innerHTML = '💾 Guardar Servicio';
+      isEditingService = false;
+      document.getElementById('serviceModal').classList.add('show');
+    }
+
+    function closeServiceModal() {
+      document.getElementById('serviceModal').classList.remove('show');
+    }
+
+    // Editar servicio
+    async function editService(id) {
+      const servicio = servicios.find(s => s.id === id);
+      if (!servicio) return;
+
+      document.getElementById('serviceModalTitle').textContent = 'Editar Servicio';
+      document.getElementById('serviceId').value = servicio.id;
+      document.getElementById('serviceName').value = servicio.nombre;
+      document.getElementById('serviceDescription').value = servicio.descripcion || '';
+      document.getElementById('servicePrice').value = servicio.precio;
+      document.getElementById('serviceDuration').value = servicio.duracion_estimada || '';
+      document.getElementById('serviceCategory').value = servicio.categoria_id || '';
+      
+      document.getElementById('saveServiceBtn').innerHTML = '💾 Actualizar Servicio';
+      isEditingService = true;
+      document.getElementById('serviceModal').classList.add('show');
+    }
+
+    // Guardar servicio
+    async function saveService(e) {
+      e.preventDefault();
+
+      const data = {
+        nombre: document.getElementById('serviceName').value.trim(),
+        descripcion: document.getElementById('serviceDescription').value.trim(),
+        precio: parseFloat(document.getElementById('servicePrice').value),
+        duracionEstimada: parseInt(document.getElementById('serviceDuration').value) || null,
+        categoriaId: document.getElementById('serviceCategory').value || null
+      };
+
+      if (!data.nombre) {
+        showToast('El nombre del servicio es requerido', 'error');
+        return;
+      }
+
+      try {
+        let result;
+        if (isEditingService) {
+          data.id = document.getElementById('serviceId').value;
+          result = await window.api.editarServicio(data);
+        } else {
+          result = await window.api.agregarServicio(data);
+        }
+
+        if (result.success) {
+          showToast(isEditingService ? 'Servicio actualizado' : 'Servicio agregado', 'success');
+          closeServiceModal();
+          await loadServices();
+        } else {
+          showToast('Error guardando servicio', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+      }
+    }
+
+    // Eliminar servicio
+    async function deleteService(id, nombre) {
+      if (!confirm(`¿Eliminar el servicio "${nombre}"?`)) return;
+
+      try {
+        const result = await window.api.eliminarServicio(id);
+        if (result.success) {
+          showToast('Servicio eliminado', 'success');
+          await loadServices();
+        } else {
+          showToast('Error eliminando servicio', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+      }
+    }
+
+    // Crear orden desde servicio
+    function createOrderFromService(serviceId) {
+      switchTab('orders');
+      setTimeout(() => {
+        openOrderModal();
+        document.getElementById('orderService').value = serviceId;
+        document.getElementById('orderService').dispatchEvent(new Event('change'));
+      }, 100);
+    }
+
+    // Cargar órdenes
+    async function loadOrders() {
+      // Esta función se implementaría cuando tengas los handlers en main.js
+      console.log('Cargando órdenes...');
+      // Por ahora mostrar mensaje placeholder
+      document.getElementById('ordersList').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3 class="empty-title">Funcionalidad en desarrollo</h3>
+          <p class="empty-description">
+            El sistema de órdenes de servicio estará disponible próximamente
+          </p>
+        </div>
+      `;
+    }
+
+    // Modal de orden
+    function openOrderModal() {
+      document.getElementById('orderModalTitle').textContent = 'Nueva Orden de Servicio';
+      document.getElementById('orderForm').reset();
+      document.getElementById('orderId').value = '';
+      document.getElementById('saveOrderBtn').innerHTML = '💾 Guardar Orden';
+      isEditingOrder = false;
+      document.getElementById('orderModal').classList.add('show');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').classList.remove('show');
+    }
+
+    // Guardar orden
+    async function saveOrder(e) {
+      e.preventDefault();
+      showToast('Funcionalidad de órdenes en desarrollo', 'info');
+    }
+
+    // Sistema de notificaciones toast
+    function showToast(message, type = 'info') {
+      const existingToasts = document.querySelectorAll('.toast');
+      existingToasts.forEach(toast => toast.remove());
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Cerrar modales al hacer clic fuera
+    document.getElementById('serviceModal').addEventListener('click', function(e) {
+      if (e.target === this) closeServiceModal();
+    });
+
+    document.getElementById('orderModal').addEventListener('click', function(e) {
+      if (e.target === this) closeOrderModal();
+    });
+
+    // Atajos de teclado
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeServiceModal();
+        closeOrderModal();
+      }
+    });
+  </script>
+</body>
+</html>

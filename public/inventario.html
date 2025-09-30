@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Inventario - Sistema Avanzado</title>
+<link rel="stylesheet" href="../public/css/styles.css">
+<link rel="stylesheet" href="../public/css/inventory.css">
+</head>
+<body>
+  <div class="particles"></div>
+
+  <div class="main-container">
+    <div class="header">
+      <div class="header-left">
+        <div class="header-icon">📦</div>
+        <div>
+          <h1 class="header-title">Gestión de Inventario</h1>
+          <p class="header-subtitle">Administra tus productos, categorías y stock</p>
+        </div>
+      </div>
+      <button class="btn btn-back" onclick="goBack()">
+        ← Regresar
+      </button>
+    </div>
+
+    <div class="card controls-section">
+      <div class="search-bar">
+        <div class="search-container">
+          <div class="search-icon">🔍</div>
+          <input type="text" id="searchInput" class="search-input" placeholder="Buscar productos por nombre o descripción...">
+          <button class="clear-search" id="clearSearch" onclick="clearSearch()">✕</button>
+        </div>
+        <div class="toggle-section">
+          <label class="toggle-switch">
+            <input type="checkbox" id="showZeroStock" checked>
+            <span class="slider"></span>
+          </label>
+          <label class="toggle-label" for="showZeroStock">Mostrar Sin Stock</label>
+        </div>
+      </div>
+
+      <div class="filters">
+        <select id="categoriaFilter" class="filter-select">
+          <option value="">Todas las categorías</option>
+        </select>
+        <select id="subcategoriaFilter" class="filter-select">
+          <option value="">Todas las subcategorías</option>
+        </select>
+        <select id="stockFilter" class="filter-select">
+          <option value="">Todo el stock</option>
+          <option value="high">Stock alto (>20)</option>
+          <option value="medium">Stock medio (6-20)</option>
+          <option value="low">Stock bajo (1-5)</option>
+          <option value="empty">Sin stock (0)</option>
+        </select>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="openProductModal()">
+          ➕ Nuevo Producto
+        </button>
+        <button class="btn btn-secondary" onclick="openViewModal()">
+          👁️ Configurar Columnas
+        </button>
+        <button class="btn btn-warning" onclick="openCategoriaModal()">
+          🏷️ Gestionar Categorías
+        </button>
+        <button class="btn btn-success" onclick="exportToExcel()">
+          📊 Exportar a Excel
+        </button>
+        <button class="btn btn-warning" onclick="openExtraccionModal()">
+          📤 Extraer Stock
+        </button>
+        <button class="btn btn-danger" onclick="openDefectuososModal()">
+          ❌ Marcar Defectuosos
+        </button>
+      </div>
+    </div>
+
+    <div class="card products-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          📋 Productos
+          <span id="productCount" style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 4px 12px; border-radius: 20px; font-size: 14px;">0</span>
+        </h2>
+      </div>
+
+      <div id="productsContainer">
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de producto -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Nuevo Producto</h3>
+        <button class="close-btn" onclick="closeProductModal()">✕</button>
+      </div>
+
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Nombre del Producto *</label>
+            <input type="text" id="productName" class="form-input" placeholder="Ej: iPhone 14 Pro" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Descripción</label>
+            <textarea id="productDescription" class="form-textarea" placeholder="Descripción detallada del producto..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Stock *</label>
+            <input type="number" id="productStock" class="form-input" placeholder="0" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cantidad por Unidad</label>
+            <input type="number" id="productCantidad" class="form-input" placeholder="1" min="1" value="1">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio USD *</label>
+            <input type="number" id="productPriceUsd" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio CUP (auto-calculado)</label>
+            <input type="number" id="productPriceCup" class="form-input" placeholder="0.00" step="0.01" min="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">oPrecio CUP</label>
+            <input type="number" id="productOPrecioCup" class="form-input" placeholder="0.00" step="0.01" min="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PxG CUP</label>
+            <input type="number" id="productPxgCup" class="form-input" placeholder="0.00" step="0.01" min="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Extracciones</label>
+            <input type="number" id="productExtracciones" class="form-input" placeholder="0" min="0" value="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Defectuosos</label>
+            <input type="number" id="productDefectuosos" class="form-input" placeholder="0" min="0" value="0">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoría *</label>
+            <select id="productCategoria" class="form-select" required>
+              <option value="">Seleccione una categoría</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subcategoría</label>
+            <select id="productSubcategoria" class="form-select">
+              <option value="">Seleccione una subcategoría</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">
+            💾 Guardar Producto
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de configuración de columnas -->
+  <div class="modal" id="viewModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Configurar Columnas Visibles</h3>
+        <button class="close-btn" onclick="closeViewModal()">✕</button>
+      </div>
+
+      <div class="column-config" id="columnConfig">
+        <!-- Se llenará dinámicamente con JavaScript -->
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="resetColumns()">
+          🔄 Restablecer
+        </button>
+        <button type="button" class="btn btn-primary" onclick="applyColumnConfig()">
+          ✅ Aplicar Configuración
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de gestión de categorías -->
+  <div class="modal" id="categoriaModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Gestionar Categorías y Subcategorías</h3>
+        <button class="close-btn" onclick="closeCategoriaModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nueva Categoría</label>
+        <div class="categoria-form">
+          <input type="text" id="newCategoriaName" class="form-input categoria-input" placeholder="Nombre de la categoría">
+          <button type="button" class="btn btn-primary" onclick="addCategoria()">
+            ➕ Agregar
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Categorías Existentes</label>
+        <div class="categorias-list" id="categoriasList">
+          <div class="loading">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nueva Subcategoría</label>
+        <div style="display: flex; gap: 12px;">
+          <select id="subcategoriaParent" class="form-select" style="flex: 1;">
+            <option value="">Seleccionar categoría padre</option>
+          </select>
+          <input type="text" id="newSubcategoriaName" class="form-input" placeholder="Nombre subcategoría" style="flex: 1;">
+          <button type="button" class="btn btn-primary" onclick="addSubcategoria()">
+            ➕ Agregar
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeCategoriaModal()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de editar categoría -->
+  <div class="modal" id="editCategoriaModal">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Categoría</h3>
+        <button class="close-btn" onclick="closeEditCategoriaModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nombre de la categoría</label>
+        <input type="text" id="editCategoriaName" class="form-input" placeholder="Nombre de la categoría">
+        <input type="hidden" id="editCategoriaId">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeEditCategoriaModal()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveEditCategoria()">
+          💾 Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de editar subcategoría -->
+  <div class="modal" id="editSubcategoriaModal">
+    <div class="modal-content" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Subcategoría</h3>
+        <button class="close-btn" onclick="closeEditSubcategoriaModal()">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nombre de la subcategoría</label>
+        <input type="text" id="editSubcategoriaName" class="form-input" placeholder="Nombre de la subcategoría">
+        <input type="hidden" id="editSubcategoriaId">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeEditSubcategoriaModal()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveEditSubcategoria()">
+          💾 Guardar Cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de extracción de stock -->
+  <div class="modal" id="extraccionModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Extraer Stock de Producto</h3>
+        <button class="close-btn" onclick="closeExtraccionModal()">✕</button>
+      </div>
+
+      <div class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label class="form-label">Seleccionar Producto</label>
+          <select id="extraccionProducto" class="form-select" onchange="updateStockDisplay('extraccion')">
+            <option value="">Seleccione un producto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Stock Actual</label>
+          <input type="text" id="extraccionStockActual" class="form-input" readonly style="background: #f8fafc;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cantidad a Extraer</label>
+          <input type="number" id="extraccionCantidad" class="form-input" placeholder="1" min="1" value="1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Motivo (Opcional)</label>
+          <input type="text" id="extraccionMotivo" class="form-input" placeholder="Ej: Venta, uso interno, etc.">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeExtraccionModal()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-warning" onclick="procesarExtraccion()">
+          📤 Procesar Extracción
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de productos defectuosos -->
+  <div class="modal" id="defectuososModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Marcar Productos Defectuosos</h3>
+        <button class="close-btn" onclick="closeDefectuososModal()">✕</button>
+      </div>
+
+      <div class="form-grid" style="grid-template-columns: 1fr;">
+        <div class="form-group">
+          <label class="form-label">Seleccionar Producto</label>
+          <select id="defectuososProducto" class="form-select" onchange="updateStockDisplay('defectuosos')">
+            <option value="">Seleccione un producto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Stock Actual</label>
+          <input type="text" id="defectuososStockActual" class="form-input" readonly style="background: #f8fafc;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Defectuosos Actuales</label>
+          <input type="text" id="defectuososActuales" class="form-input" readonly style="background: #f8fafc;">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cantidad Defectuosa</label>
+          <input type="number" id="defectuososCantidad" class="form-input" placeholder="1" min="1" value="1">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Descripción del Defecto (Opcional)</label>
+          <input type="text" id="defectuososDescripcion" class="form-input" placeholder="Ej: Dañado, no funciona, etc.">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeDefectuososModal()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-danger" onclick="procesarDefectuosos()">
+          ❌ Marcar Defectuosos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../public/js/session-manager.js"></script>
+  <script src="../public/js/inventory.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Inventario - Acceso</title>
+<link rel="stylesheet" href="D:\Proyectos a futuro\Pedro\public\css\styles.css">
+<link rel="stylesheet" href="D:\Proyectos a futuro\Pedro\public\css\login.css">
+</head>
+<body>
+  <!-- Partículas animadas -->
+  <div class="particles"></div>
+
+  <!-- Pantalla de Login -->
+  <div class="login-container">
+    <div class="login-header">
+      <div class="logo">📦</div>
+      <h1 class="login-title">Bienvenido</h1>
+      <p class="login-subtitle">Accede a tu sistema de inventario</p>
+    </div>
+
+    <div id="message" class="toast"></div>
+
+    <form class="login-form" id="loginForm">
+      <div class="form-group">
+        <input type="text" id="username" class="form-input" placeholder="Usuario" required>
+        <div class="input-icon">👤</div>
+      </div>
+
+      <div class="form-group">
+        <input type="password" id="password" class="form-input" placeholder="Contraseña" required>
+        <div class="input-icon">🔒</div>
+      </div>
+
+      <button type="submit" class="login-button" id="loginButton">
+        <span id="buttonText">Iniciar Sesión</span>
+        <div class="button-loading" id="buttonLoading">
+          <div class="spinner"></div>
+        </div>
+      </button>
+    </form>
+  </div>
+
+  <!-- Scripts -->
+  <script src="D:\Proyectos a futuro\Pedro\public\js\session-manager.js"></script>
+  <script src="D:\Proyectos a futuro\Pedro\public\js\login.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Gestión - Panel Principal</title>
+<link rel="stylesheet" href="D:\Proyectos a futuro\Pedro\public\css\styles.css">
+<link rel="stylesheet" href="D:\Proyectos a futuro\Pedro\public\css\dashboard.css">
+</head>
+<body>
+  <!-- Header con información del usuario -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Bienvenidos a los servicios de gestión de IA</h1>
+      <div class="header-subtitle">Panel de control principal</div>
+    </div>
+    <div id="user-info">
+      <!-- Se llenará dinámicamente con JavaScript -->
+    </div>
+  </div>
+
+  <!-- Contenedor principal -->
+  <div class="main-container">
+    <!-- Dashboard Principal -->
+    <div class="dashboard" id="dashboard">
+      <div class="tabs">
+        <button class="tab active" data-tab="overview">Resumen</button>
+        <button class="tab" data-tab="currencies">Monedas</button>
+        <button class="tab" data-tab="users" id="usersTab" style="display: none;">Usuarios</button>
+      </div>
+
+      <!-- Tab: Resumen -->
+      <div class="tab-content active" id="overview">
+        <!-- Estadísticas principales -->
+        <div class="stats-grid">
+          <div class="stat-card primary">
+            <div class="stat-number" id="totalProducts">-</div>
+            <div class="stat-label">PRODUCTOS TOTAL</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-number" id="totalCategories">-</div>
+            <div class="stat-label">SIN STOCK</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-number" id="lowStock">-</div>
+            <div class="stat-label">VENTAS ESTE MES</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-number" id="monthlyIncome">$0.00</div>
+            <div class="stat-label">INGRESOS ESTE MES</div>
+          </div>
+        </div>
+
+        <!-- Menú principal reorganizado -->
+        <div class="modules-grid">
+          <!-- Módulo Inventario -->
+          <div class="module-container">
+            <div class="menu-card inventario">
+              <div class="menu-icon">📦</div>
+              <div class="menu-title">Inventario</div>
+              <div class="menu-description">
+                Gestiona productos, categorías, stock y precios de manera eficiente
+              </div>
+            </div>
+            <button class="module-button inventario" onclick="dashboardManager.navegarAInventario()">
+              Acceder al Inventario
+            </button>
+          </div>
+
+          <!-- Módulo Ventas -->
+          <div class="module-container">
+            <div class="menu-card ventas">
+              <div class="menu-icon">💰</div>
+              <div class="menu-title">Ventas</div>
+              <div class="menu-description">
+                Procesa ventas, genera facturas y administra transacciones
+              </div>
+            </div>
+            <button class="module-button ventas" onclick="dashboardManager.navegarA('D:\Proyectos a futuro\Pedro\public\ventas.html')">
+              Acceder a Ventas
+            </button>
+          </div>
+
+          <!-- Módulo Servicios -->
+          <div class="module-container">
+            <div class="menu-card servicios">
+              <div class="menu-icon">🛠️</div>
+              <div class="menu-title">Servicios</div>
+              <div class="menu-description">
+                Administra servicios, órdenes de trabajo y seguimiento de clientes
+              </div>
+            </div>
+            <button class="module-button servicios" onclick="dashboardManager.navegarA('D:\Proyectos a futuro\Pedro\public\servicios.html')">
+              Acceder a Servicios
+            </button>
+          </div>
+
+          <!-- Módulo Reportes -->
+          <div class="module-container">
+            <div class="menu-card reportes">
+              <div class="menu-icon">📊</div>
+              <div class="menu-title">Reportes</div>
+              <div class="menu-description">
+                Genera reportes detallados y estadísticas del negocio
+              </div>
+            </div>
+            <button class="module-button reportes" onclick="dashboardManager.navegarA('D:\Proyectos a futuro\Pedro\public\reportes.html')">
+              Acceder a Reportes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Monedas -->
+      <div class="tab-content" id="currencies">
+        <div class="user-form">
+          <h3 style="margin-bottom: 16px; color: #2d3748;">💰 Gestión de Monedas y Tasas de Cambio</h3>
+          <div class="form-grid">
+            <input type="text" id="currencyCode" placeholder="Código (USD, EUR, CUP)" class="form-input">
+            <input type="text" id="currencyName" placeholder="Nombre de la moneda" class="form-input">
+            <input type="number" id="exchangeRate" placeholder="Tasa de cambio" step="0.01" class="form-input">
+            <button id="addCurrencyBtn" class="btn-primary">Agregar Moneda</button>
+          </div>
+          <input type="hidden" id="editCurrencyId">
+        </div>
+
+        <div class="users-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Tasa de Cambio</th>
+                <th>Fecha Actualización</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="currenciesTableBody">
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 12px; border-left: 4px solid #4299e1;">
+          <h4 style="color: #2d3748; margin-bottom: 8px;">💡 Información sobre Tasas de Cambio</h4>
+          <p style="color: #718096; font-size: 14px; line-height: 1.5;">
+            • USD es la moneda base (tasa = 1.00)<br>
+            • Las tasas se expresan en relación al USD<br>
+            • Actualiza las tasas regularmente para mantener precios precisos<br>
+            • Los precios en el inventario se calcularán automáticamente usando estas tasas
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab: Gestión de Usuarios (solo admin) -->
+      <div class="tab-content" id="users">
+        <div class="user-form">
+          <h3 style="margin-bottom: 16px; color: #2d3748;">Agregar / Editar Usuario</h3>
+          <div class="form-grid">
+            <input type="text" id="newUsername" placeholder="Nombre de usuario" class="form-input">
+            <input type="password" id="newPassword" placeholder="Contraseña" class="form-input">
+            <select id="newRole" class="form-select">
+              <option value="usuario">Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+            <button id="addUserBtn" class="btn-primary">Agregar Usuario</button>
+          </div>
+          <input type="hidden" id="editUserId">
+        </div>
+
+        <div class="users-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje flotante -->
+  <div id="message" class="toast"></div>
+
+  <!-- Scripts -->
+  <script src="D:\Proyectos a futuro\Pedro\public\js\session-manager.js"></script>
+  <script src="D:\Proyectos a futuro\Pedro\public\js\dashboard.js"></script>
+</body>
+</html>

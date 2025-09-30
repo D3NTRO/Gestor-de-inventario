@@ -1,0 +1,447 @@
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+    opacity: 0.3; 
+  }
+  50% { 
+    transform: translateY(-20px) rotate(180deg); 
+    opacity: 0.6; 
+  }
+}
+
+.main-container {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: var(--space-lg);
+}
+
+/* Sección de controles */
+.controls-section {
+  margin-bottom: var(--space-lg);
+}
+
+.search-bar {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  align-items: center;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-xl);
+  color: var(--text-muted);
+  z-index: 3;
+}
+
+.search-input {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg) var(--space-md) 50px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: white;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.clear-search {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-gray-200);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  display: none;
+}
+
+.toggle-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #667eea;
+}
+
+input:checked + .slider:before {
+  transform: translateX(32px);
+}
+
+.toggle-label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Filtros */
+.filters {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: var(--space-md);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: white;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+/* Botones de acción */
+.action-buttons {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+/* Sección de productos */
+.products-section {
+  animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+/* Tabla de productos estilo Excel */
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  font-size: var(--font-size-xs);
+}
+
+.products-table th {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  padding: var(--space-md) var(--space-sm);
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-right: 1px solid var(--border-light);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.products-table th:last-child {
+  border-right: none;
+}
+
+.products-table td {
+  padding: var(--space-sm) 6px;
+  border-bottom: 1px solid #f7fafc;
+  border-right: 1px solid #f0f0f0;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.products-table td:last-child {
+  border-right: none;
+}
+
+.products-table tr:hover {
+  background: linear-gradient(135deg, #f8fafc, #edf2f7);
+  transition: all 0.2s ease;
+}
+
+.products-table tr.out-of-stock {
+  opacity: 0.6;
+  background: rgba(255, 59, 48, 0.05);
+}
+
+/* Estilos de celdas específicas */
+.product-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-cell {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.stock-high { color: #38a169; }
+.stock-medium { color: #d69e2e; }
+.stock-low { color: #e53e3e; }
+.stock-zero { 
+  color: #e53e3e; 
+  background: rgba(255, 59, 48, 0.1); 
+}
+
+.price-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Edición inline */
+.editable-cell {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  display: inline-block;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.editable-cell:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.edit-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-weight: 600;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.edit-input:focus {
+  outline: none;
+  background: white;
+  box-shadow: 0 0 0 2px #667eea;
+}
+
+/* Tabla responsive */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Acciones de tabla */
+.table-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+/* Configuración de columnas */
+.column-config {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.column-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-gray-50);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.column-item:hover {
+  background: var(--bg-gray-200);
+}
+
+.column-checkbox {
+  transform: scale(1.2);
+}
+
+.column-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+/* Gestión de categorías */
+.categoria-form {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  align-items: end;
+}
+
+.categoria-input {
+  flex: 1;
+}
+
+.categorias-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: white;
+}
+
+.categoria-item {
+  padding: var(--space-md);
+  border-bottom: 1px solid #f7fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.categoria-item:last-child {
+  border-bottom: none;
+}
+
+.categoria-item:hover {
+  background: var(--bg-gray-50);
+}
+
+.categoria-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.categoria-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.subcategoria-item {
+  padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-xl);
+  background: var(--bg-gray-50);
+  font-size: 13px;
+  border-left: 3px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subcategoria-name {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* Responsive específico de inventario */
+@media (max-width: 1200px) {
+  .products-table {
+    font-size: 10px;
+  }
+  
+  .products-table th,
+  .products-table td {
+    padding: 6px 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+  }
+  
+  .filters {
+    flex-direction: column;
+  }
+  
+  .filter-select {
+    min-width: unset;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .products-table {
+    font-size: 10px;
+  }
+  
+  .table-actions {
+    flex-direction: column;
+  }
+}

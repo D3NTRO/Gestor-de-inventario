@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Gestión de Usuarios</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; }
+input, select { margin: 5px 0; padding: 6px; width: 200px; }
+button { margin: 5px 0; padding: 6px 12px; }
+table { border-collapse: collapse; width: 400px; margin-top: 20px; }
+td, th { border: 1px solid #ccc; padding: 8px; text-align: left; }
+</style>
+</head>
+<body>
+<h2>Gestión de Usuarios</h2>
+<div>
+  <input id="nuevoUsuario" placeholder="Usuario" />
+  <input id="nuevaContrasena" placeholder="Contraseña" type="password" />
+  <select id="rolUsuario">
+    <option value="usuario">Usuario</option>
+    <option value="admin">Admin</option>
+  </select>
+  <button id="btnAgregar">Agregar Usuario</button>
+</div>
+<div>
+  <input id="usuarioBorrar" placeholder="Usuario a borrar" />
+  <button id="btnBorrar">Borrar Usuario</button>
+</div>
+<table id="tablaUsuarios">
+  <thead><tr><th>Usuario</th><th>Rol</th></tr></thead>
+  <tbody></tbody>
+</table>
+<script>
+const agregarBtn = document.getElementById('btnAgregar');
+const borrarBtn = document.getElementById('btnBorrar');
+const tablaBody = document.querySelector('#tablaUsuarios tbody');
+
+async function listarUsuarios() {
+  const res = await window.api.listarUsuarios();
+  if (res.success) {
+    tablaBody.innerHTML = '';
+    res.usuarios.forEach(u => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${u.username}</td><td>${u.rol}</td>`;
+      tablaBody.appendChild(tr);
+    });
+  }
+}
+
+agregarBtn.addEventListener('click', async () => {
+  const usuario = document.getElementById('nuevoUsuario').value;
+  const contrasena = document.getElementById('nuevaContrasena').value;
+  const rol = document.getElementById('rolUsuario').value;
+  const res = await window.api.agregarUsuario({ usuario, password: contrasena, rol });
+  if (res.success) listarUsuarios();
+  else alert('Error: ' + res.error);
+});
+
+borrarBtn.addEventListener('click', async () => {
+  const usuario = document.getElementById('usuarioBorrar').value;
+  const res = await window.api.borrarUsuario({ usuario });
+  if (res.success) listarUsuarios();
+  else alert('Error: ' + res.error);
+});
+
+listarUsuarios();
+</script>
+<button onclick="window.location='index.html'">Regresar</button>
+
+</body>
+</html>

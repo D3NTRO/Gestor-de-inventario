@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Ventas</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px 32px;
+  margin: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #ed8936, #dd6b20);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.header-subtitle {
+  color: #718096;
+  font-size: 14px;
+}
+
+.back-btn {
+  background: #f56565;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #e53e3e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 101, 101, 0.3);
+}
+
+/* Layout principal */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+  padding: 0 20px 20px;
+  height: calc(100vh - 120px);
+}
+
+/* Panel de nueva venta */
+.venta-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f7fafc;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Buscar producto */
+.search-product {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.product-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  display: none;
+}
+
+.suggestion-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f7fafc;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background: #f8fafc;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* Carrito de compras */
+.cart-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.item-price {
+  color: #718096;
+  font-size: 14px;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.qty-input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.remove-btn {
+  background: #f56565;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 40px 20px;
+  color: #718096;
+}
+
+/* Total y botones de acción */
+.cart-summary {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 4px 0;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  font-weight: 700;
+  border-top: 2px solid #e2e8f0;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.payment-methods {
+  margin-bottom: 20px;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sale-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  color: white;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e0;
+}
+
+/* Panel de historial */
+.history-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.history-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-input {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.history-item:hover {
+  background: #edf2f7;
+  transform: translateX(4px);
+}
+
+.sale-id {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 14px;
+}
+
+.sale-date {
+  color: #718096;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.sale-total {
+  color: #48bb78;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 2000;
+  transform: translateX(400px);
+  transition: all 0.3s ease;
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  
+  .history-panel {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .sale-actions {
+    flex-direction: column;
+  }
+  
+  .history-filters {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">💰</div>
+      <div>
+        <h1 class="header-title">Sistema de Ventas</h1>
+        <p class="header-subtitle">Procesa ventas y gestiona transacciones</p>
+      </div>
+    </div>
+    <button class="back-btn" onclick="window.history.back()">
+      ← Regresar
+    </button>
+  </div>
+
+  <!-- Layout principal -->
+  <div class="main-layout">
+    <!-- Panel de nueva venta -->
+    <div class="venta-panel">
+      <div class="panel-title">
+        🛒 Nueva Venta
+      </div>
+
+      <!-- Buscar producto -->
+      <div class="search-product">
+        <div style="position: relative;">
+          <input 
+            type="text" 
+            id="searchProduct" 
+            class="search-input" 
+            placeholder="Buscar producto por nombre o código..."
+            autocomplete="off"
+          >
+          <div id="productSuggestions" class="product-suggestions"></div>
+        </div>
+      </div>
+
+      <!-- Carrito de compras -->
+      <div class="cart-container">
+        <div class="cart-items" id="cartItems">
+          <div class="empty-cart">
+            <div style="font-size: 48px; margin-bottom: 16px;">🛒</div>
+            <p>No hay productos en el carrito</p>
+            <p style="font-size: 14px; margin-top: 8px;">Busca y selecciona productos para comenzar una venta</p>
+          </div>
+        </div>
+
+        <!-- Resumen del carrito -->
+        <div class="cart-summary" id="cartSummary" style="display: none;">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotal">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Descuento:</span>
+            <span id="discount">$0.00</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span id="total">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Método de pago -->
+        <div class="payment-methods" id="paymentMethods" style="display: none;">
+          <h4 style="margin-bottom: 12px; color: #2d3748;">Método de pago:</h4>
+          <div class="payment-method">
+            <input type="radio" id="efectivo" name="payment" value="efectivo" checked>
+            <label for="efectivo">Efectivo</label>
+          </div>
+          <div class="payment-method">
+            <input type="radio" id="tarjeta" name="payment" value="tarjeta">
+            <label for="tarjeta">Tarjeta</label>
+          </div>
+          <div class="payment-method">
+            <input type="radio" id="transferencia" name="payment" value="transferencia">
+            <label for="transferencia">Transferencia</label>
+          </div>
+        </div>
+
+        <!-- Acciones de venta -->
+        <div class="sale-actions" id="saleActions" style="display: none;">
+          <button class="btn-secondary" onclick="clearCart()">
+            Limpiar
+          </button>
+          <button class="btn-primary" onclick="processSale()">
+            Procesar Venta
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de historial -->
+    <div class="history-panel">
+      <div class="panel-title">
+        📋 Historial de Ventas
+      </div>
+
+      <div class="history-filters">
+        <input 
+          type="date" 
+          id="filterDate" 
+          class="filter-input"
+          onchange="loadSalesHistory()"
+        >
+        <select id="filterMethod" class="filter-input" onchange="loadSalesHistory()">
+          <option value="">Todos los métodos</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="tarjeta">Tarjeta</option>
+          <option value="transferencia">Transferencia</option>
+        </select>
+      </div>
+
+      <div class="history-list" id="historyList">
+        <div style="text-align: center; padding: 40px; color: #718096;">
+          Cargando historial...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="session-manager.js"></script>
+  <script>
+    // Variables globales
+    let productos = [];
+    let cart = [];
+    let ventas = [];
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProducts();
+      loadSalesHistory();
+      setupEventListeners();
+      
+      // Establecer fecha de hoy por defecto
+      document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+    });
+
+    // Event listeners
+    function setupEventListeners() {
+      const searchInput = document.getElementById('searchProduct');
+      searchInput.addEventListener('input', handleProductSearch);
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          selectFirstSuggestion();
+        }
+      });
+
+      // Cerrar sugerencias al hacer clic fuera
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-product')) {
+          document.getElementById('productSuggestions').style.display = 'none';
+        }
+      });
+    }
+
+    // Cargar productos
+    async function loadProducts() {
+      try {
+        productos = await window.api.listarProductos();
+      } catch (error) {
+        console.error('Error cargando productos:', error);
+        showToast('Error cargando productos', 'error');
+      }
+    }
+
+    // Buscar productos
+    function handleProductSearch() {
+      const query = document.getElementById('searchProduct').value.toLowerCase();
+      const suggestions = document.getElementById('productSuggestions');
+      
+      if (query.length < 2) {
+        suggestions.style.display = 'none';
+        return;
+      }
+
+      const filtered = productos.filter(p => 
+        p.nombre.toLowerCase().includes(query) ||
+        (p.descripcion && p.descripcion.toLowerCase().includes(query)) ||
+        (p.codigo_barras && p.codigo_barras.includes(query))
+      ).slice(0, 5);
+
+      if (filtered.length === 0) {
+        suggestions.style.display = 'none';
+        return;
+      }
+
+      suggestions.innerHTML = filtered.map(p => `
+        <div class="suggestion-item" onclick="addToCart(${p.id})">
+          <div style="font-weight: 600;">${p.nombre}</div>
+          <div style="font-size: 12px; color: #718096;">
+            Stock: ${p.stock} | ${parseFloat(p.precio).toFixed(2)}
+          </div>
+        </div>
+      `).join('');
+
+      suggestions.style.display = 'block';
+    }
+
+    // Seleccionar primera sugerencia
+    function selectFirstSuggestion() {
+      const firstSuggestion = document.querySelector('.suggestion-item');
+      if (firstSuggestion) {
+        firstSuggestion.click();
+      }
+    }
+
+    // Agregar al carrito
+    function addToCart(productId) {
+      const producto = productos.find(p => p.id === productId);
+      if (!producto) return;
+
+      if (producto.stock <= 0) {
+        showToast('Producto sin stock', 'error');
+        return;
+      }
+
+      // Verificar si ya está en el carrito
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        if (existingItem.quantity >= producto.stock) {
+          showToast('No hay suficiente stock', 'error');
+          return;
+        }
+        existingItem.quantity++;
+      } else {
+        cart.push({
+          id: producto.id,
+          nombre: producto.nombre,
+          precio: parseFloat(producto.precio),
+          quantity: 1,
+          stock: producto.stock
+        });
+      }
+
+      // Limpiar búsqueda
+      document.getElementById('searchProduct').value = '';
+      document.getElementById('productSuggestions').style.display = 'none';
+
+      updateCartDisplay();
+      showToast('Producto agregado al carrito', 'success');
+    }
+
+    // Actualizar visualización del carrito
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartSummary = document.getElementById('cartSummary');
+      const paymentMethods = document.getElementById('paymentMethods');
+      const saleActions = document.getElementById('saleActions');
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = `
+          <div class="empty-cart">
+            <div style="font-size: 48px; margin-bottom: 16px;">🛒</div>
+            <p>No hay productos en el carrito</p>
+            <p style="font-size: 14px; margin-top: 8px;">Busca y selecciona productos para comenzar una venta</p>
+          </div>
+        `;
+        cartSummary.style.display = 'none';
+        paymentMethods.style.display = 'none';
+        saleActions.style.display = 'none';
+        return;
+      }
+
+      // Mostrar items del carrito
+      cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="item-info">
+            <div class="item-name">${item.nombre}</div>
+            <div class="item-price">${item.precio.toFixed(2)} c/u</div>
+          </div>
+          <div class="item-controls">
+            <div class="quantity-controls">
+              <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">−</button>
+              <input type="number" class="qty-input" value="${item.quantity}" 
+                     onchange="updateQuantity(${item.id}, this.value)" min="1" max="${item.stock}">
+              <button class="qty-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+            </div>
+            <button class="remove-btn" onclick="removeFromCart(${item.id})">×</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Calcular totales
+      const subtotal = cart.reduce((sum, item) => sum + (item.precio * item.quantity), 0);
+      const discount = 0; // Por ahora sin descuentos
+      const total = subtotal - discount;
+
+      document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)}`;
+      document.getElementById('discount').textContent = `${discount.toFixed(2)}`;
+      document.getElementById('total').textContent = `${total.toFixed(2)}`;
+
+      // Mostrar elementos de venta
+      cartSummary.style.display = 'block';
+      paymentMethods.style.display = 'block';
+      saleActions.style.display = 'flex';
+    }
+
+    // Actualizar cantidad
+    function updateQuantity(productId, newQuantity) {
+      const item = cart.find(item => item.id === productId);
+      if (!item) return;
+
+      newQuantity = parseInt(newQuantity);
+      
+      if (newQuantity <= 0) {
+        removeFromCart(productId);
+        return;
+      }
+
+      if (newQuantity > item.stock) {
+        showToast('Cantidad excede el stock disponible', 'error');
+        return;
+      }
+
+      item.quantity = newQuantity;
+      updateCartDisplay();
+    }
+
+    // Remover del carrito
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      updateCartDisplay();
+      showToast('Producto removido del carrito', 'success');
+    }
+
+    // Limpiar carrito
+    function clearCart() {
+      if (cart.length === 0) return;
+      
+      if (confirm('¿Limpiar todo el carrito?')) {
+        cart = [];
+        updateCartDisplay();
+        showToast('Carrito limpiado', 'success');
+      }
+    }
+
+    // Procesar venta
+    async function processSale() {
+      if (cart.length === 0) {
+        showToast('El carrito está vacío', 'error');
+        return;
+      }
+
+      const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+      const user = window.sessionManager.getCurrentUser();
+
+      try {
+        const saleData = {
+          productos: cart.map(item => ({
+            productoId: item.id,
+            cantidad: item.quantity,
+            precioUnitario: item.precio
+          })),
+          metodoPago: paymentMethod,
+          descuentoTotal: 0,
+          usuarioId: user.id
+        };
+
+        const result = await window.api.registrarVenta(saleData);
+        
+        if (result.success) {
+          showToast(`Venta procesada correctamente - Total: ${result.total.toFixed(2)}`, 'success');
+          cart = [];
+          updateCartDisplay();
+          loadSalesHistory();
+          
+          // Recargar productos para actualizar stock
+          await loadProducts();
+        } else {
+          showToast(result.error || 'Error procesando venta', 'error');
+        }
+      } catch (error) {
+        console.error('Error procesando venta:', error);
+        showToast('Error de conexión', 'error');
+      }
+    }
+
+    // Cargar historial de ventas
+    async function loadSalesHistory() {
+      try {
+        const filterDate = document.getElementById('filterDate').value;
+        const filterMethod = document.getElementById('filterMethod').value;
+        
+        const filtros = {
+          limit: 50
+        };
+        
+        if (filterDate) {
+          filtros.fechaInicio = filterDate + ' 00:00:00';
+          filtros.fechaFin = filterDate + ' 23:59:59';
+        }
+
+        ventas = await window.api.listarVentas(filtros);
+        
+        // Filtrar por método de pago si se especifica
+        let filteredVentas = ventas;
+        if (filterMethod) {
+          filteredVentas = ventas.filter(v => v.metodo_pago === filterMethod);
+        }
+
+        const historyList = document.getElementById('historyList');
+        
+        if (filteredVentas.length === 0) {
+          historyList.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #718096;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📋</div>
+              <p>No hay ventas registradas</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Agrupar ventas por ID si están relacionadas
+        const groupedSales = {};
+        filteredVentas.forEach(venta => {
+          const fecha = new Date(venta.fecha).toLocaleString();
+          const key = `${fecha}_${venta.metodo_pago}`;
+          
+          if (!groupedSales[key]) {
+            groupedSales[key] = {
+              id: venta.id,
+              fecha: fecha,
+              metodoPago: venta.metodo_pago,
+              vendedor: venta.vendedor,
+              items: [],
+              total: 0
+            };
+          }
+          
+          groupedSales[key].items.push({
+            producto: venta.producto_nombre,
+            cantidad: venta.cantidad,
+            subtotal: parseFloat(venta.precio_total)
+          });
+          
+          groupedSales[key].total += parseFloat(venta.precio_total);
+        });
+
+        historyList.innerHTML = Object.values(groupedSales).map(sale => `
+          <div class="history-item" onclick="showSaleDetails(${sale.id})">
+            <div class="sale-date">${sale.fecha}</div>
+            <div class="sale-id">Venta #${sale.id} - ${sale.metodoPago}</div>
+            <div style="font-size: 12px; color: #718096; margin: 4px 0;">
+              ${sale.items.length} producto(s) - Vendedor: ${sale.vendedor || 'N/A'}
+            </div>
+            <div class="sale-total">${sale.total.toFixed(2)}</div>
+          </div>
+        `).reverse().join('');
+
+      } catch (error) {
+        console.error('Error cargando historial:', error);
+        document.getElementById('historyList').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #f56565;">
+            Error cargando historial
+          </div>
+        `;
+      }
+    }
+
+    // Mostrar detalles de venta
+    function showSaleDetails(saleId) {
+      // Aquí podrías implementar un modal con detalles completos de la venta
+      console.log('Mostrar detalles de venta:', saleId);
+    }
+
+    // Sistema de notificaciones toast
+    function showToast(message, type = 'info') {
+      // Remover toasts existentes
+      const existingToasts = document.querySelectorAll('.toast');
+      existingToasts.forEach(toast => toast.remove());
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      // Mostrar
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      // Ocultar después de 3 segundos
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
